@@ -130,3 +130,8 @@ dmypy.json
 
 # VS code
 *.code-workspace
+
+# Project specific files
+Transcodarr.log
+Transcodarr.queue
+Transcodarr.error
