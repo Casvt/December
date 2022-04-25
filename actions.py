@@ -252,7 +252,7 @@ class action:
 							#subtitle is hearing impaired version
 							if 'sdh' in exclude_versions: continue
 							version += '.sdh'
-						if stream['disposition']['forced'] == 1 or ('tags' in stream.keys() and 'title' in stream['tags'].keys() and stream['targs']['title'].lower() == 'forced'):
+						if stream['disposition']['forced'] == 1 or ('tags' in stream.keys() and 'title' in stream['tags'].keys() and stream['tags']['title'].lower() == 'forced'):
 							#subtitle is forced
 							if 'forced' in exclude_versions: continue
 							version += '.forced'
@@ -929,7 +929,7 @@ class action:
 									continue
 							else:
 								#stream has unknown language
-								if audio['keep_audio_unkown_language'] == False:
+								if audio['keep_audio_unknown_language'] == False:
 									#settings say to ditch audio with unknown language
 									continue
 
