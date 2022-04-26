@@ -657,6 +657,20 @@ class action:
 				with open(os.devnull, 'w') as err:
 					subprocess.run(comm, stdout=log, stderr=err)
 
+		def convert_channel_layout(channel_layout):
+			#convert ffmpeg -> d.d
+			if channel_layout == 'mono':
+				return '1.0'
+			elif channel_layout == 'stereo':
+				return '2.0'
+			elif channel_layout == 'quad':
+				return '4.0'
+			elif channel_layout == 'hexagonal':
+				return '6.0'
+			elif channel_layout == 'octagonal':
+				return '8.0'
+			return channel_layout
+
 		for file in files:
 			if file.endswith(self.media_filter):
 				#check if file is actually media file
@@ -971,7 +985,7 @@ class action:
 							stream_settings += ['-map', f'0:{index}']
 							audio_added = True
 							#set codec of audio
-							channel_layout = stream['channel_layout'].replace('(side)','').strip()
+							channel_layout = convert_channel_layout(stream['channel_layout'].replace('(side)','').strip())
 							if audio['audio_codec'][channel_layout] == 'copy' \
 							or (audio['audio_codec'][channel_layout] == 'libfdk_aac' and stream['codec_name'] == 'aac'):
 								#copy codec because settings say so or because audio codec is already target codec
