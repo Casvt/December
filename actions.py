@@ -724,48 +724,54 @@ class action:
 							return 'ERROR', file
 
 						#first try to find the file in sonarr
+						og_found = False
 						try:
-							og_found = False
 							sonarr_search = requests.get(f'{self.vars["sonarr_baseurl"]}/api/v3/parse', params={'path': file, 'apikey': self.vars['sonarr_api_token']}).json()
-							if 'series' in sonarr_search.keys() and sonarr_search['series']['path'] in file:
-								#file found in sonarr
-								og_found = True
-								r = re_compile(r'(?<=<strong>Original Language</strong>\r\n                    <span>).*?(?=</span>)')
-								t = requests.get(f'https://thetvdb.com/dereferrer/series/{sonarr_search["series"]["tvdbId"]}').text
+						except requests.exceptions.ConnectionError as e:
+							self.logging.exception(f'{func_name} Failed to connect to sonarr')
+							sonarr_search = {}
 
-							else:
-								#not found in sonarr; try to find file in radarr
+						if 'series' in sonarr_search.keys() and sonarr_search['series']['path'] in file:
+							#file found in sonarr
+							og_found = True
+							r = re_compile(r'(?<=<strong>Original Language</strong>\r\n                    <span>).*?(?=</span>)')
+							t = requests.get(f'https://thetvdb.com/dereferrer/series/{sonarr_search["series"]["tvdbId"]}').text
+
+						else:
+							#not found in sonarr; try to find file in radarr
+							try:
 								radarr_search = requests.get(f'{self.vars["radarr_baseurl"]}/api/v3/movie', params={'apikey': self.vars["radarr_api_token"]}).json()
 								radarr_search = [m for m in radarr_search if m['path'] in file]
-								if radarr_search:
-									#file found in radarr
-									og_found = True
-									r = re_compile(r'(?<=Original Language</bdi></strong> ).*?(?=(?:</p>|;))')
-									t = requests.get(f'https://www.themoviedb.org/movie/{radarr_search[0]["tmdbId"]}', headers={'User-Agent':'Transcodarr'}).text
-								else:
-									#file not found in any *arr
-									if og_audio_error() == 'exit': return 'ERROR', file
+							except requests.exceptions.ConnectionError as e:
+								self.logging.exception(f'{func_name} Failed to connect to radarr')
+								radarr_search = []
 
-							if og_found == True:
-								#search for spoken language and convert to lang code
-								og_lang = r.search(t)
-								if og_lang == None:
-									#spoken language could not be found
-									if og_audio_error() == 'exit': return 'ERROR', file
-								else:
-									og_lang = og_lang.group(0)
-									for lang_code, lang in self.langs.items():
-										if og_lang.lower() in lang:
-											#spoken language found, recognized, converted and added; successful
-											audio_keep += [lang_code] + lang
-											break
-									else:
-										#spoken language was found but could not be converted (e.g. failed to do "English" -> "en")
-										self.logging.error(f'{func_name} The language "{og_lang}" was not recognized')
-										if og_audio_error() == 'exit': return 'ERROR', file
+							if radarr_search:
+								#file found in radarr
+								og_found = True
+								r = re_compile(r'(?<=Original Language</bdi></strong> ).*?(?=(?:</p>|;))')
+								t = requests.get(f'https://www.themoviedb.org/movie/{radarr_search[0]["tmdbId"]}', headers={'User-Agent':'Transcodarr'}).text
+							else:
+								#file not found in any *arr
+								if og_audio_error() == 'exit': return 'ERROR', file
 
-						except ConnectionError as e:
-							self.logging.exception(f'{func_name} Failed to connect to sonarr')
+						if og_found == True:
+							#search for spoken language and convert to lang code
+							og_lang = r.search(t)
+							if og_lang == None:
+								#spoken language could not be found
+								if og_audio_error() == 'exit': return 'ERROR', file
+							else:
+								og_lang = og_lang.group(0)
+								for lang_code, lang in self.langs.items():
+									if og_lang.lower() in lang:
+										#spoken language found, recognized, converted and added; successful
+										audio_keep += [lang_code] + lang
+										break
+								else:
+									#spoken language was found but could not be converted (e.g. failed to do "English" -> "en")
+									self.logging.error(f'{func_name} The language "{og_lang}" was not recognized')
+									if og_audio_error() == 'exit': return 'ERROR', file
 
 				#subtitle
 				subtitle_keep = []
