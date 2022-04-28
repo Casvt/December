@@ -186,16 +186,51 @@ Documentation:
 			python3 -m pip install chardet
 
 To-Do:
-- Improve filters in transcode action
-- Handle stopping of the script (https://video.stackexchange.com/questions/32297/resuming-a-partially-completed-encode-with-ffmpeg)
-- Docs on creating your own action
-- Setup proper plugin system
-- Web-UI for V2
-To-Do actions:
-- mkv_audiotrack_renamer.sh
-- Trigger bazarr basic fixes on subs
-- audio_sub_changer.py
-- order streams based on (v: res, a: channels -> lang, s: lang)
+	Actions
+		Add/improve filters in media_transcode action
+		Handle interruption of the script in media_transcode action (https://video.stackexchange.com/questions/32297/resuming-a-partially-completed-encode-with-ffmpeg)
+		When action doesn't need to do anything, skip instead of executing empty command (media_transcode, media_extract_sub, sub_clone?)
+		Filter argument to only apply action to filtered files for once
+		New actions
+			Rename audio tracks to their surround sound technology (e.g. Dolby Atmos or DTS X)
+			Trigger bazarr "basic fixes" on subtitles
+			Setting audio and subtitle stream for plex users
+			Order streams in media files (v: res, a: channels -> lang, s: lang)
+	Docs
+		Add docs for creating your own action
+		Setup wiki in GitHub
+	General functioning
+		Create proper plugin system
+	V2
+		Setup venv and auto install action-modules when needed
+		API
+		Allow adding folders to "monitor and convert"
+		Sonarr/Radarr integration
+			Interact with api to add connection
+		Web-UI
+			Websocket for queue, log, etc.
+			index.html (top to bottom)
+				system load
+				current file processed
+				log of file that is being processed
+				queue
+					File browser to add files to queue
+			statistics.html (top to bottom)
+				space saved
+				history
+			actions.html (top to bottom)
+				visual rep of processes
+				allow adding/removing/editing actions
+				allow changing order
+				display process in human words at the top in ordered list
+				allow adding/removing/editing vars
+		DB
+			Store
+				processes
+				api key
+				hosting settings
+				statistics
+				vars
 """
 
 import os, logging
