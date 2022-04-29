@@ -942,7 +942,7 @@ class action:
 									continue
 
 							#audio is normal or it's commentary but the settings allow it; audio type is allowed
-							if 'tags' in stream.keys() and 'language' in stream['tags'].keys():
+							if 'tags' in stream.keys() and 'language' in stream['tags'].keys() and not stream['tags']['language'].lower() in ('und','undefined','unknown'):
 								#stream has a language tagged
 								if audio_keep and not stream['tags']['language'] in audio_keep:
 									#settings say to ditch audio with this language
