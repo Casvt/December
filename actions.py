@@ -1137,6 +1137,7 @@ class action:
 						#settings say to keep all audio streams except commentary
 						#this is a "rescue" of the audio streams so no duplicates removed, clones made, codec changed or metadata removed
 						self.logging.warning(f'{func_name} Current media file has no matching audio tracks; adding all except commentary')
+						audio_index = 0
 						for stream in file_info['streams']:
 							if stream['codec_type'] == 'audio':
 								if not ((stream['disposition']['comment'] == 1) or ('tags' in stream.keys() and 'title' in stream['tags'].keys() and 'comment' in stream['tags']['title'].lower())):
@@ -1145,18 +1146,26 @@ class action:
 									#add audio
 									stream_settings += [
 										'-map', f'0:{index}',
-										f'-codec:0:{index}', 'copy'
+										f'-codec:a:{audio_index}', 'copy'
 									]
 									audio_added = True
+									audio_index += 1
 				if audio['keep_audio'] == True and audio_added == False:
 					if audio['keep_audio_all_on_no_match_in_com'] == True:
 						#settings say to keep all audio stream including commentary (all audio streams are commentary)
 						#this is a "rescue" of the audio streams so no duplicates removed, clones made, codec changed or metadata removed
 						self.logging.warning(f'{func_name} Current media file only has commentary audio tracks; adding all')
-						stream_settings += [
-							'-map', '0:a',
-							'-codec:a', 'copy'
-						]
+						audio_index = 0
+						for stream in file_info['streams']:
+							if stream['codec_type'] == 'audio':
+								#audio track found
+								index = str(stream['index'])
+								#add audio
+								stream_settings += [
+									'-map', f'0:{index}',
+									f'-codec:a:{audio_index}', 'copy'
+								]
+								audio_index += 1
 
 				#setup the transcode thread
 
