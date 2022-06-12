@@ -805,7 +805,7 @@ class action:
 				if video['keep_video'] == True:
 					if key_check('video_codec', video, str) == False: return 'ERROR', file
 					if not video['video_codec'] in ('libx265','libx264','hevc_nvenc','h264_nvenc','copy'):
-						self.logging.error(f'{func_name} The argument "video_codec" does not have a valid value ("libx265","libx264" or "copy")')
+						self.logging.error(f'{func_name} The argument "video_codec" does not have a valid value ("libx265","libx264","hevc_nvenc","h264_nvenc" or "copy")')
 						return 'ERROR', file
 
 				if audio['keep_audio'] == True:
