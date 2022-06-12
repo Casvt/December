@@ -346,8 +346,10 @@ class action:
 				
 				-	key:	video_codec
 					value:	string with options: 
-								'libx265'	#h265
-								'libx264'	#h264
+								'libx265'	 #h265
+								'libx264'	 #h264
+								'h264_nvenc' #h264 hw
+								'hevc_nvenc' #h265 hw
 								'copy'		#copy current codec (aka don't change the codec)
 					use:	define the target codec of the video streams inside the media file
 					example: 'libx265'
@@ -802,7 +804,7 @@ class action:
 				if key_check('keep_video', video, bool) == False: return 'ERROR', file
 				if video['keep_video'] == True:
 					if key_check('video_codec', video, str) == False: return 'ERROR', file
-					if not video['video_codec'] in ('libx265','libx264','copy'):
+					if not video['video_codec'] in ('libx265','libx264','hevc_nvenc','h264_nvenc','copy'):
 						self.logging.error(f'{func_name} The argument "video_codec" does not have a valid value ("libx265","libx264" or "copy")')
 						return 'ERROR', file
 

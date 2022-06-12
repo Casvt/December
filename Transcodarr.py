@@ -262,8 +262,6 @@ vars = {
 	#plex_scan
 	'plex_baseurl': '',
 	'plex_api_token': '',
-	#media_transcode
-	'transcode_bitrate_ratio_libx265': 0.5,
 
 	'sonarr_baseurl': '',
 	'sonarr_api_token': '',
