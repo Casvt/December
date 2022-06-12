@@ -336,7 +336,7 @@ class action:
 				use:	define video-stream specific arguments in this dictionary (see example)
 				example: see example below
 				note:	1. every sub-argument of this argument is documented below with one indent more
-						2. every sub-argument is required to be given
+						2. every sub-argument is required to be given unless otherwise stated
 
 				-	key:	keep_video
 					value:	bool (True | False)
@@ -362,6 +362,7 @@ class action:
 					use:	specificy the bitrate ratio between the source stream and the transcoded stream
 					example: 0.6
 						this example will lead to the resulting file being 60% of the original file size (but possibly also a decrease in quality)
+					Note: NOT REQUIRED
 
 			-	key:	audio
 				value:	dict ({})
@@ -508,7 +509,7 @@ class action:
 				use:	define various arguments in this dictionary (see example)
 				example: see example below
 				note:	1. every sub-argument of this argument is documented below with one indent more
-						2. every sub-argument is required to be given
+						2. every sub-argument is required to be given unless otherwise stated
 
 				-	key:	keep_metadata
 					value:	bool (True | False)
@@ -522,6 +523,14 @@ class action:
 					use:	set to False to remove any integrated media posters
 					example: False
 							this example will lead to all integrated posters being removed from the file
+				
+				-	key:	preset
+					value:	string ('')
+					use:	set a preset for ffmpeg to use
+					example: 'slow'
+							this example will lead to the 'slow' preset being used
+					Note: NOT REQUIRED
+
 		example:
 			'arguments': {
 				'video': {
@@ -563,7 +572,8 @@ class action:
 				},
 				'various': {
 					'keep_metadata': False,
-					'keep_poster': False
+					'keep_poster': False,
+					'preset': 'slow'
 				}
 			}
 
@@ -582,16 +592,9 @@ class action:
 				keep subtitles,
 					but only english, dutch or unknown language ones
 					don't keep any sdh or forced subtitles (regardless of language)
-				ditch metadata and posters
+				ditch metadata and posters,
+				use the 'slow' preset
 		action-specific variables:
-			-	key:	transcode_bitrate_ratio_[video_codec]
-				value:	float (n.n)
-				use:	specificy the bitrate ratio between the source stream and the transcoded stream
-				example: 'transcode_bitrate_ratio_libx265': 0.5
-						this example will lead to stream transcoded to x265 having half the bitrate of the original stream
-				note:	when no bitrate ratio is defined for a codec, a target bitrate will not be passed to ffmpeg
-							and it will just become what it will become
-
 			#only needed when 'keep_audio_originally_spoken_language' is set to True
 			-	key:	sonarr_baseurl
 				value:	str ('')
@@ -904,8 +907,8 @@ class action:
 							video_added = True
 							#set codec of video
 							if video['video_codec'] == 'copy' \
-							or (video['video_codec'] == 'libx265' and stream['codec_name'] == 'hevc') \
-							or (video['video_codec'] == 'libx264' and stream['codec_name'] == 'h264'):
+							or (video['video_codec'] in ('libx265','hevc_nvenc') and stream['codec_name'] == 'hevc') \
+							or (video['video_codec'] in ('libx264','h264_nvenc') and stream['codec_name'] == 'h264'):
 								#copy codec because settings say so or because video codec is already target codec
 								stream_settings += [f'-codec:v:{video_index}', 'copy']
 							else:
@@ -1182,13 +1185,14 @@ class action:
 					log_file = f'.ffmpeg-transcode-{"".join([str(int(random() * 10)) for x in range(4)])}'
 					if not os.path.isfile(log_file):
 						break
+				pres_l = ['-preset',various['preset']] if 'preset' in various else []
 				comm = [
 					self.vars['ffmpeg'], '-y',
 					'-v', 'quiet',
 					'-progress', '-',
 					'-strict', '2',
 					'-i', file
-				] + stream_settings + [
+				] + pres_l + stream_settings + [
 					output_file
 				]
 				self.logging.debug(f'{func_name} Settings used for transcode')
