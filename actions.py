@@ -357,6 +357,12 @@ class action:
 					note:	1. when the source video stream is already in the target codec, the codec is set to 'copy' (duh...)
 							2. more codecs are supported out of the box, but these are 'verified' right now
 
+				-	key:	bitrate_ratio
+					value:	float (n.n)
+					use:	specificy the bitrate ratio between the source stream and the transcoded stream
+					example: 0.6
+						this example will lead to the resulting file being 60% of the original file size (but possibly also a decrease in quality)
+
 			-	key:	audio
 				value:	dict ({})
 				use:	define audio-stream specific arguments in this dictionary (see example)
@@ -841,9 +847,9 @@ class action:
 				file_info = json.loads(subprocess.run(comm, capture_output=True, text=True).stdout)
 				self.logging.debug(f'{func_name} File info extracted')
 				self.logging.debug(file_info)
-				codec_bitrate_ratio = self.vars.get(f'transcode_bitrate_ratio_{video["video_codec"]}', '')
+				codec_bitrate_ratio = video.get('bitrate_ratio', '')
 				if codec_bitrate_ratio != '' and not isinstance(codec_bitrate_ratio, float):
-					self.logging.error(f'{func_name} The action-specific variable "transcode_bitrate_ratio_{video["video_codec"]}" has an invalid value (type should be float)')
+					self.logging.error(f'{func_name} The argument "bitrate_ratio" has an invalid value (type should be float)')
 				if codec_bitrate_ratio != '':
 					#bitrate ratio is defined for this video codec
 					bitrate = int(int(file_info['format']['bit_rate']) * codec_bitrate_ratio)
