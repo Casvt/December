@@ -1,5 +1,6 @@
 import os
 
+
 class action:
 	def __init__(self, vars):
 		self.vars = vars
@@ -91,7 +92,10 @@ class action:
 
 			sub.ass -> sub.ass (without ads)
 		"""
-		import subprocess, chardet, pysrt
+		import subprocess
+
+		import chardet
+		import pysrt
 		ad_list = ['nordvpn', 'a Card Shark AMERICASCARDROOM', 'OpenSubtitles', 'Advertise your product or brand here', 'Apóyanos y conviértete en miembro VIP Para', 'Addic7ed', 'argenteam', 'AllSubs', 'Created and Encoded by', 'correctedby', 'Entre a AmericasCardroom. com Hoy', 'Everyone is intimidated by a shark. Become', 'Juegue Poker en Línea por Dinero Real', 'OpenSubtitles', 'Open Subtitles', 'MKV Player', 'MKV player', 'Resyncfor', 'Resyncimproved', 'Ripped?By', 'Sigue "Community" en', 'Subtitlesby', 'Subt?tulospor', 'Support us and become VIP member', 'SubsTeam', 'subscene', 'Subtitulado por', 'subtitulamos', 'Synchronizedby', 'Sincronizado y corregido por', 'subdivx', 'SyncCorrected', 'Synccorrectionsby', 'sync and corrections by', 'Syncby', 'Unatraducci?nde', 'tvsubtitles', 'Unatraducci?nde', 'Tacho8']
 		result_modified = False
 
@@ -222,7 +226,8 @@ class action:
 				self.logging.error(f'{func_name} The version "{v}" is not a valid value in the list')
 				return 'ERROR'
 
-		import subprocess, json
+		import json
+		import subprocess
 		result_files = []
 
 		for file in files:
@@ -622,10 +627,14 @@ class action:
 		"""
 		container = '.' + container.lstrip('.')
 
-		from re import compile as re_compile
-		from re import DOTALL as re_DOTALL
+		import json
+		import subprocess
+		import threading
+		import time
 		from random import random
-		import json, subprocess, threading, time
+		from re import DOTALL as re_DOTALL
+		from re import compile as re_compile
+
 		#https://trac.ffmpeg.org/wiki/AudioChannelManipulation
 		filters = {
 			'5.0': {

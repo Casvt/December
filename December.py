@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
-import os, logging
+import logging
+import os
 from time import sleep
+
 from actions import action
 
 #--------------------
