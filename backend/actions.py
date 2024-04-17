@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 import os
 
 
@@ -348,9 +350,9 @@ class action:
 					use:	set to False to remove all video streams from the media file
 					example: True
 							this example will lead to certain (or all) video streams being kept in the transcoded file
-				
+
 				-	key:	video_codec
-					value:	string with options: 
+					value:	string with options:
 								'libx265'	 #h265
 								'libx264'	 #h264
 								'h264_nvenc' #h264 hw
@@ -388,20 +390,20 @@ class action:
 					example: False
 							this example will lead to all commentary audio tracks being removed from the media file
 					note:	when this sub-argument is set to True, the commentary audio tracks are treated just like normal tracks are
-				
+
 				-	key:	keep_audio_unknown_language
 					value:	bool (True | False)
 					use:	set to False to remove any audio track that doesn't have a language tagged to it
 					example: True
 							this example will lead to all audio tracks with an unknown language to be kept in the transcoded file
 					note:	when this sub-argument is set to True, the audio tracks with unknown language are treated just like normal tracks are
-				
+
 				-	key:	keep_audio_duplicates
 					value:	bool (True | False)
 					use:	set to False to remove any duplicate audio tracks (if there are two duplicate audio streams, only keep one)
 					example: False
 							this example will lead to all duplicate audio tracks being removed from the media file
-					note:	if an audio stream is a duplicate is based on if the following matches: 
+					note:	if an audio stream is a duplicate is based on if the following matches:
 								channel layout (e.g. 5.1), codec (e.g. aac) and language (e.g. English)
 
 				-	key:	keep_audio_language_tags
@@ -418,13 +420,13 @@ class action:
 								e.g. keep_audio_language_tags: ['it'] but the file only has english audio tracks
 					example: True
 							this example will lead to all audio tracks, except commentary, being saved when no audio track is originally kept
-				
+
 				-	key:	keep_audio_all_on_no_match_in_com
 					value:	bool (True | False)
 					use:	this expands on 'keep_audio_all_on_no_match_ex_com', but here commentary tracks are also kept
 					example: True
 							this example will lead to all normal and commentary tracks being added when no audio track is originally kept
-				
+
 				-	key:	keep_audio_originally_spoken_language
 					value:	bool (True | False)
 					use:	find the originally spoken language of the media and safe audio tracks in that language too
@@ -438,7 +440,7 @@ class action:
 								'ignore' #continue the process without keeping the originally spoken language (as it couldn't be found)
 					use:	what should happen when the originally spoken language of the media can't be found (e.g. the media is not added in sonarr/radarr)
 					example: 'ignore'
-							this example will lead to the process continuing even though the originally spoken language couldn't be found 
+							this example will lead to the process continuing even though the originally spoken language couldn't be found
 								and won't be kept (unless it was already kept by 'keep_audio_language_tags')
 
 				-	key:	audio_codec
@@ -483,13 +485,13 @@ class action:
 				example: see example below
 				note:	1. every sub-argument of this argument is documented below with one indent more
 						2. every sub-argument is required to be given
-				
+
 				-	key:	keep_subtitle
 					value:	bool (True | False)
 					use:	set to False to remove all subtitle streams from the media file
 					example: True
 							this example will lead to certain (or all) subtitle streams being kept in the transcoded file
-				
+
 				-	key:	keep_subtitle_language_tags
 					value:	list ([])
 					use:	only keep subtitle tracks that have one of these languages
@@ -528,7 +530,7 @@ class action:
 					use:	set to False to remove any integrated media posters
 					example: False
 							this example will lead to all integrated posters being removed from the file
-				
+
 				-	key:	preset
 					value:	string ('')
 					use:	set a preset for ffmpeg to use
@@ -1288,7 +1290,7 @@ class action:
 				use:	specify the base url of the plex server to connect to
 				example: 'plex_baseurl': 'http://192.168.2.15:32400'
 						this example will lead to all plex requests being send to this base url
-			
+
 			-	key:	plex_api_token
 				value:	str ('')
 				use:	specify the api token used for authenticating the requests to the plex server
