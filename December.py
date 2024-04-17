@@ -245,9 +245,9 @@ vars = {
 	'ffprobe': './bin/ffprobe',
 
 	#files
-	'log_file': './Transcodarr.log',
-	'queue_file': './Transcodarr.queue',
-	'error_file': './Transcodarr.error',
+	'log_file': './December.log',
+	'queue_file': './December.queue',
+	'error_file': './December.error',
 
 	#project variables
 	'check_interval': 30,
@@ -270,7 +270,7 @@ vars = {
 }
 #--------------------
 
-vars = os.environ.get('Transcodarr_vars', vars)
+vars = os.environ.get('December_vars', vars)
 for file in ('ffmpeg','ffprobe','log_file', 'queue_file', 'error_file'):
 	vars[file] = os.path.join(os.path.dirname(__file__), vars[file])
 logging.basicConfig(level=vars['logging_level'], filename=vars['log_file'], format='[%(asctime)s][%(levelname)s]%(message)s', datefmt='%Y-%m-%d %H:%M:%S')

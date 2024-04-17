@@ -761,7 +761,7 @@ class action:
 								#file found in radarr
 								og_found = True
 								r = re_compile(r'(?<=Original Language</bdi></strong> ).*?(?=(?:</p>|;))')
-								t = requests.get(f'https://www.themoviedb.org/movie/{radarr_search[0]["tmdbId"]}', headers={'User-Agent':'Transcodarr'}).text
+								t = requests.get(f'https://www.themoviedb.org/movie/{radarr_search[0]["tmdbId"]}', headers={'User-Agent':'December'}).text
 							else:
 								#file not found in any *arr
 								if og_audio_error() == 'exit': return 'ERROR', file

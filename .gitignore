@@ -132,6 +132,7 @@ dmypy.json
 *.code-workspace
 
 # Project specific files
-Transcodarr.log
-Transcodarr.queue
-Transcodarr.error
+December.config
+December.log
+December.queue
+December.error
