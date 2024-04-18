@@ -1,12 +1,13 @@
 #-*- coding: utf-8 -*-
 
-from time import sleep
+from os.path import isfile
+from time import perf_counter, sleep
 from typing import Union
 
 from backend.config import Config
 from backend.helpers import BaseEnum
 from backend.queue import Queue
-from os.path import isfile
+
 
 class Command(BaseEnum):
 	CONFIG_UPDATE = "CONFIG_UPDATE"
@@ -36,13 +37,23 @@ class QueueHandler:
 		try:
 			self.config.logger.info(f'Processing {file}')
 
-			if file.endswith(self.config.subtitle_filter):
-				# File is a subtitle file
-				pass
-
-			elif file.endswith(self.config.media_filter):
-				# File is a media file
-				pass
+			if file.endswith((
+				*self.config.media_filter,
+				*self.config.subtitle_filter
+			)):
+				if file.endswith(self.config.media_filter):
+					chain = self.config.media_process
+				else:
+					chain = self.config.subtitle_process
+				
+				start_time = perf_counter()
+				files = [file]
+				for link in chain:
+					self.config.logger.info(f'Starting {link.__class__.__name__}')
+					self.config.logger.debug(f'Running files: {files}')
+					files = link.run(files)
+				self.config.logger.debug(f'Resulting files: {files}')
+				self.config.logger.debug(f'Total time: {perf_counter() - start_time:.2f}s')
 
 			else:
 				self.config.logger.warning("File is not supported or allowed")

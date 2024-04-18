@@ -1,11 +1,14 @@
 #-*- coding: utf-8 -*-
 
 from dataclasses import dataclass, field
+from importlib import import_module
 from json import JSONDecodeError, load
 from logging import Logger, _nameToLevel
-from os.path import abspath, isfile
+from os import sep, walk
+from os.path import abspath, isfile, join, splitext
 from typing import Any, Dict, Mapping, Sequence, Tuple, Type, Union
 
+from backend.actions.general_actions import Action, ActionEntry
 from backend.helpers import Singleton, T
 from backend.logging import setup_logging
 
@@ -39,13 +42,30 @@ class ConfigValues:
 	radarr_base_url: Union[str, None] = None
 	radarr_api_token: Union[str, None] = None
 
-	media_process: Sequence[Mapping] = field(default_factory=lambda: [])
-	subtitle_process: Sequence[Mapping] = field(default_factory=lambda: [])
+	media_process: Sequence[Action] = field(default_factory=lambda: [])
+	subtitle_process: Sequence[Action] = field(default_factory=lambda: [])
 
 
 class Config(metaclass=Singleton):
+	"Note: is singleton"
+	
 	def __init__(self, config_file: str = '') -> None:
 		self.file = config_file
+
+		for current, folders, files in walk(join('backend', 'actions')):
+			if '__pycache__' in current:
+				continue
+			base_path = '.'.join(current.split(sep))
+			for f in files:
+				st = splitext(f)
+				if st[1] == '.py' and f[0] != '__init__':
+					import_module('.'.join((base_path, st[0])))
+
+		self.str_to_action: Dict[str, Type[Action]] = {
+			c.__module__.split('actions.')[-1] + '.' + c.__name__: c
+			for c in Action.__subclasses__()
+		}
+
 		self.reload_config()
 		return
 
@@ -79,7 +99,6 @@ class Config(metaclass=Singleton):
 		return
 
 	def __parse_config(self, config: Mapping[str, Any]) -> Dict[str, Any]:
-		## TODO: plex, sonarr and radarr vars
 		final_config = {}
 		value: Any
 
@@ -152,19 +171,60 @@ class Config(metaclass=Singleton):
 			[],
 			list
 		)
+		media_result = []
+		final_config['media_process'] = media_result
 		for p in media_process:
-			if not isinstance(p, dict):
-				raise ValueError(f"Invalid value for setting in config file: 'media_process'")
-		final_config['media_process'] = media_process
+			try:
+				if not isinstance(p, dict):
+					raise ValueError(f"Invalid value for setting in config file: 'media_process'")
+
+				action_entry = ActionEntry(**p)
+				action_class = self.str_to_action.get(action_entry.action)
+				if action_class is None:
+					raise TypeError
+				action_vars = action_entry.vars
+				action_vars_class = action_class.var_class
+
+				if action_vars_class is None:
+					inst = action_class(None)
+				else:
+					inst = action_class(action_vars_class(**action_vars))
+
+				media_result.append(inst)
+
+			except TypeError:
+				raise ValueError(f"Invalid value for setting in config file: 'media_process' -> {p}")
 
 		subtitle_process = get_optional_key(
 			'subtitle_process',
 			[],
 			list
 		)
+		subtitle_result = []
+		final_config['subtitle_process'] = subtitle_result
 		for p in subtitle_process:
 			if not isinstance(p, dict):
 				raise ValueError(f"Invalid value for setting in config file: 'subtitle_process'")
-		final_config['subtitle_process'] = subtitle_process
+
+			try:
+				if not isinstance(p, dict):
+					raise ValueError(f"Invalid value for setting in config file: 'subtitle_process'")
+
+				action_entry = ActionEntry(**p)
+				action_class = self.str_to_action.get(action_entry.action)
+				if action_class is None:
+					raise TypeError
+				action_vars = action_entry.vars
+				action_vars_class = action_class.var_class
+
+				if action_vars_class is None:
+					inst = action_class(None)
+				else:
+					inst = action_class(action_vars_class(**action_vars))
+
+				subtitle_result.append(inst)
+
+			except TypeError:
+				raise ValueError(f"Invalid value for setting in config file: 'subtitle_process' -> {p}")
 
 		return final_config
