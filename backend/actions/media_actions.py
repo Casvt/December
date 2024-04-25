@@ -19,7 +19,14 @@ extract_og_lang_tvdb = compile(r'<strong>Original Language</strong>\r\n\s+<span>
 extract_og_lang_tmdb = compile(r'Original Language</bdi></strong>\s(.*?)</p>')
 
 # https://trac.ffmpeg.org/wiki/AudioChannelManipulation
+# https://superuser.com/questions/852400/properly-downmix-5-1-to-stereo-using-ffmpeg
 CHANNEL_FILTERS = {
+	'3.0': {
+		'2.0': 'pan=stereo|FL = 0.414214*FC + 0.585786*FL | FR = 0.414214*FC + 0.585786*FR'
+	},
+	'4.0': {
+		'2.0': 'pan=stereo|FL = 0.422650*FL + 0.366025*BL + 0.211325*BR | FR = 0.422650*FR + 0.366025*BR + 0.211325*BL'
+	},
 	'5.0': {
 		'2.0': 'pan=stereo|FL = 0.460186*FC + 0.650802*FL + 0.563611*BL + 0.325401*BR | FR = 0.460186*FC + 0.650802*FR + 0.563611*BR + 0.325401*BL'
 	},
