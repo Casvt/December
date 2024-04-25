@@ -905,10 +905,18 @@ class MediaTranscode(Action):
 						self.config.logger.warning(f"Converting a channel from '{channel_layout}' to '{target_clone}' is not supported")
 						continue
 
+					channel_codec = stream["codec_name"] if keep_codec else self.vars._audio.codec
+					if not self.vars._audio.keep_duplicates:
+						channel_count = sum((int(c) for c in channel_layout.split('.')))
+						audio_rep = f"{channel_codec}|{channel_count}|{stream['__language']}"
+						if audio_rep in audio_log:
+							continue
+						audio_log.append(audio_rep)
+
 					stream_settings += [
 						"-map", f"0:{stream['index']}",
 						f"-filter:{index}", CHANNEL_FILTERS[channel_layout][target_clone],
-						f"-codec:{index}", stream["codec_name"] if keep_codec else self.vars._audio.codec
+						f"-codec:{index}", channel_codec
 					]
 
 					if not self.vars._general.keep_metadata:
