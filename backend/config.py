@@ -8,6 +8,9 @@ from os import sep, walk
 from os.path import abspath, isfile, join, splitext
 from typing import Any, Dict, Mapping, Sequence, Tuple, Type, Union
 
+from requests import get
+from requests.exceptions import RequestException
+
 from backend.actions.general_actions import Action, ActionEntry
 from backend.helpers import Singleton, T
 from backend.logging import setup_logging
@@ -166,6 +169,69 @@ class Config(metaclass=Singleton):
 				raise ValueError(f"Invalid value for setting in config file: 'subtitle_filter'")
 		final_config['subtitle_filter'] = subtitle_filter
 
+		plex_base_url = get_optional_key(
+			'plex_base_url',
+			'',
+			str
+		)
+		plex_api_token = get_optional_key(
+			'plex_api_token',
+			'',
+			str
+		)
+		if plex_base_url and plex_api_token:
+			try:
+				success = get(f'{plex_base_url}/', params={'X-Plex-Token': plex_api_token}).ok
+			except RequestException:
+				success = False
+			if not success:
+				raise ValueError(f"Can't connect to plex with given values")
+			final_config['plex_setup'] = True
+			final_config['plex_base_url'] = plex_base_url
+			final_config['plex_api_token'] = plex_api_token
+
+		sonarr_base_url = get_optional_key(
+			'sonarr_base_url',
+			'',
+			str
+		)
+		sonarr_api_token = get_optional_key(
+			'sonarr_api_token',
+			'',
+			str
+		)
+		if sonarr_base_url and sonarr_api_token:
+			try:
+				success = get(f'{sonarr_base_url}/api/v3/system/status', params={'apikey': sonarr_api_token}).ok
+			except RequestException:
+				success = False
+			if not success:
+				raise ValueError(f"Can't connect to sonarr with given values")
+			final_config['sonarr_setup'] = True
+			final_config['sonarr_base_url'] = sonarr_base_url
+			final_config['sonarr_api_token'] = sonarr_api_token
+
+		radarr_base_url = get_optional_key(
+			'radarr_base_url',
+			'',
+			str
+		)
+		radarr_api_token = get_optional_key(
+			'radarr_api_token',
+			'',
+			str
+		)
+		if radarr_base_url and radarr_api_token:
+			try:
+				success = get(f'{radarr_base_url}/api/v3/system/status', params={'apikey': radarr_api_token}).ok
+			except RequestException:
+				success = False
+			if not success:
+				raise ValueError(f"Can't connect to radarr with given values")
+			final_config['radarr_setup'] = True
+			final_config['radarr_base_url'] = radarr_base_url
+			final_config['radarr_api_token'] = radarr_api_token
+
 		media_process = get_optional_key(
 			'media_process',
 			[],
@@ -181,7 +247,7 @@ class Config(metaclass=Singleton):
 				action_entry = ActionEntry(**p)
 				action_class = self.str_to_action.get(action_entry.action)
 				if action_class is None:
-					raise TypeError
+					raise ValueError(f"Unknown action: {action_entry.action}")
 				action_vars = action_entry.vars
 				action_vars_class = action_class.var_class
 

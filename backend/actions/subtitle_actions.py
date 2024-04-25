@@ -231,6 +231,8 @@ class SubRemoveAds(Action):
 
 			if self.__remove_ads(process_file):
 				self.config.logger.info(f'Removed ads from {file}')
+			else:
+				self.config.logger.info(f'No ads found in {file}')
 
 			if process_file != file:
 				# Convert converted file back
