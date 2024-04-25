@@ -1001,7 +1001,7 @@ class MediaTranscode(Action):
 						self.config.logger.info(f"{progress:.0f}%	| {stats['fps']:.0f} FPS	| {etr:.1f} minutes remaining")
 
 			self.config.logger.info(f"New media file size: {getsize(output_file) // 1_048_576} MiB")
-			if proc.returncode != 0:
+			if proc.returncode:
 				# Failed
 				remove(output_file)
 				self.config.logger.error("Something went wrong")
