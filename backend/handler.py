@@ -76,6 +76,7 @@ class QueueHandler:
 
 				if row is None:
 					# Queue empty
+					self.queue.remove('')
 					sleep(self.config.check_interval)
 
 				elif isfile(row):
