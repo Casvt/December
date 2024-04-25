@@ -22,6 +22,8 @@ class Queue(metaclass=Singleton):
 	def remove(self, entry: str) -> None:
 		with open(self.file, 'r') as f:
 			queue = [e.rstrip() for e in f.readlines()]
+			if not entry.rstrip() in queue:
+				return
 			queue.remove(entry.rstrip())
 		with open(self.file, 'w+') as f:
 			f.write('\n'.join(queue))

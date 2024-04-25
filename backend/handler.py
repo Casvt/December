@@ -20,7 +20,6 @@ class QueueHandler:
 
 	def __init__(self) -> None:
 		self.config_manager = Config()
-		self.config = self.config_manager.config
 		self.queue = Queue()
 		return
 
@@ -34,38 +33,39 @@ class QueueHandler:
 		return
 
 	def __handle_file(self, file: str) -> None:
+		config = self.config_manager.config
 		try:
-			self.config.logger.info(f'Processing {file}')
+			config.logger.info(f'Processing {file}')
 
 			if file.endswith((
-				*self.config.media_filter,
-				*self.config.subtitle_filter
+				*config.media_filter,
+				*config.subtitle_filter
 			)):
-				if file.endswith(self.config.media_filter):
-					chain = self.config.media_process
+				if file.endswith(config.media_filter):
+					chain = config.media_process
 				else:
-					chain = self.config.subtitle_process
+					chain = config.subtitle_process
 				
 				start_time = perf_counter()
 				files = [file]
 				for link in chain:
-					self.config.logger.info(f'Starting {link.__class__.__name__}')
-					self.config.logger.debug(f'Running files: {files}')
+					config.logger.info(f'Starting {link.__class__.__name__}')
+					config.logger.debug(f'Running files: {files}')
 					files = link.run(files)
-				self.config.logger.debug(f'Resulting files: {files}')
-				self.config.logger.debug(f'Total time: {perf_counter() - start_time:.2f}s')
+				config.logger.debug(f'Resulting files: {files}')
+				config.logger.debug(f'Total time: {perf_counter() - start_time:.2f}s')
 
 			else:
-				self.config.logger.warning("File is not supported or allowed")
+				config.logger.warning("File is not supported or allowed")
 
 		except Exception as e:
-			self.config.logger.exception('Something went wrong: ')
+			config.logger.exception('Something went wrong: ')
 
 			# Add the file to the error list
-			with open(self.config.error_file, 'a') as f:
+			with open(config.error_file, 'a') as f:
 				f.write(file + '\n')
 
-		self.config.logger.info(f'Finished {file}')
+		config.logger.info(f'Finished {file}')
 
 		return
 
@@ -77,7 +77,7 @@ class QueueHandler:
 				if row is None:
 					# Queue empty
 					self.queue.remove('')
-					sleep(self.config.check_interval)
+					sleep(self.config_manager.config.check_interval)
 
 				elif isfile(row):
 					# Process file
@@ -89,7 +89,9 @@ class QueueHandler:
 						command = Command(row)
 					except ValueError:
 						# Not an empty row, file or command
-						self.config.logger.error(f"Unknown command or not a file: {row}")
+						self.config_manager.config.logger.error(
+							f"Unknown command or not a file: {row}"
+						)
 					else:
 						# Handle command
 						self.__handle_command(command)

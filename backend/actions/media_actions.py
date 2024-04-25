@@ -987,15 +987,20 @@ class MediaTranscode(Action):
 					key, value = line.split("=")
 					key = key.strip()
 					value = value.strip()
-					if key == "out_time_ms":
+					if key == "out_time_ms" and value != "N/A":
 						stats[key] = float(value)
-					elif key == "speed":
+
+					elif key == "speed" and value != "N/A":
 						stats[key] = float(value.strip(" x"))
-					elif key == "fps":
+
+					elif key == "fps" and value != "N/A":
 						stats[key] = float(value)
-					elif key == "progress":
-						if not stats["speed"]:
-							continue
+
+					elif (
+						key == "progress"
+						and stats["speed"]
+						and stats["out_time_ms"]
+					):
 						progress = stats["out_time_ms"] / duration * 100
 						etr = abs(duration - stats["out_time_ms"]) / stats["speed"] / 1_000_000 / 60
 						self.config.logger.info(f"{progress:.0f}%	| {stats['fps']:.0f} FPS	| {etr:.1f} minutes remaining")
