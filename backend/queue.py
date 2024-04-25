@@ -24,5 +24,5 @@ class Queue(metaclass=Singleton):
 			queue = [e.rstrip() for e in f.readlines()]
 			queue.remove(entry.rstrip())
 		with open(self.file, 'w+') as f:
-			f.write(r'\n'.join(queue))
+			f.write('\n'.join(queue))
 		return
