@@ -941,7 +941,7 @@ class MediaTranscode(Action):
 
 					channel_codec = stream["codec_name"] if keep_codec else self.vars._audio.codec
 					if not self.vars._audio.keep_duplicates:
-						channel_count = sum((int(c) for c in channel_layout.split('.')))
+						channel_count = sum((int(c) for c in target_clone.split('.')))
 						audio_rep = f"{channel_codec}|{channel_count}|{stream['__language']}"
 						if audio_rep in audio_log:
 							continue
