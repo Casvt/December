@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Type, Union
 class ActionEntry:
 	action: str
 	vars: Dict[str, Any]
-	
+
 	def __post_init__(self):
 		if not isinstance(self.action, str):
 			raise TypeError
@@ -24,7 +24,7 @@ class ActionVars:
 
 class Action(ABC):
 	var_class: Union[Type[ActionVars], None] = None
-	
+
 	def __init__(self, vars: Union[ActionVars, None]) -> None:
 		self.vars = vars
 		return

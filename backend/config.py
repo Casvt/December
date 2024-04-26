@@ -51,7 +51,7 @@ class ConfigValues:
 
 class Config(metaclass=Singleton):
 	"Note: is singleton"
-	
+
 	def __init__(self, config_file: str = '') -> None:
 		self.file = config_file
 

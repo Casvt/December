@@ -45,7 +45,7 @@ class QueueHandler:
 					chain = config.media_process
 				else:
 					chain = config.subtitle_process
-				
+
 				start_time = perf_counter()
 				files = [file]
 				for link in chain:

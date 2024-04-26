@@ -56,7 +56,7 @@ TERM_TO_LAYOUT = {
 @dataclass
 class MediaExtractSubsVars(ActionVars):
 	codec: str
-	"The codec of the subtitles when it's extracted"
+	"The codec of the subtitles when it's extracted (e.g. `srt`)"
 
 	language_tag: bool
 	"Add the language code to the filename (e.g. `.en.srt` or `.nl.ass`)"
@@ -69,6 +69,9 @@ class MediaExtractSubsVars(ActionVars):
 
 	extract_languages: Union[List[str], None] = None
 	"When given, only extract the subtitles that are tagged with one of the given 2 letter language codes"
+
+	extract_codecs: Union[List[str], None] = None
+	"When given, only extract the subtitles that are one of the given codecs (e.g. `[\"subrip\", \"hdmv_pgs_subtitle\"]`)"
 
 	exclude_versions: Union[List[str], None] = None
 	"When given, don't extract subtitles if they are at least one of the given versions (e.g. `sdh` or `forced`)"
@@ -98,6 +101,12 @@ class MediaExtractSubsVars(ActionVars):
 				raise TypeError
 			if not all(f in LANGS for f in self.extract_languages):
 				raise ValueError(f"Unknown language code in list: {self.extract_languages}")
+
+		if self.extract_codecs is not None:
+			if not isinstance(self.extract_codecs, list):
+				raise TypeError
+			if not all(isinstance(f, str) for f in self.extract_codecs):
+				raise TypeError
 
 		if self.exclude_versions is not None:
 			if not isinstance(self.exclude_versions, list):
@@ -131,6 +140,7 @@ class MediaExtractSubs(Action):
 		"extract_unknown_language": true,
 		"remove_from_media": true,
 		"extract_languages": ["en", "nl", "it"],
+		"extract_codecs": ["subrip"],
 		"exclude_versions": ["sdh", "forced"]
 	}
 	```
@@ -144,7 +154,7 @@ class MediaExtractSubs(Action):
 
 	The file contained an English, Dutch and Unknown sub, which were extracted
 	and tagged in their filename. There was no Italian subtitle in the file.
-	There also was an English SDH subtitle, but it wasn't extracted. The media file
+	There also was an English, SDH, HDMV PGS, subtitle, but it wasn't extracted. The media file
 	doesn't contain the extracted Dutch, English and unknown subtitles.
 	"""
 
@@ -203,6 +213,12 @@ class MediaExtractSubs(Action):
 
 			for stream in file_info['streams']:
 				if not stream['codec_type'] == 'subtitle':
+					continue
+
+				if (
+					self.vars.extract_codecs
+					and not stream["codec_name"] in self.vars.extract_codecs
+				):
 					continue
 
 				tags = []
@@ -450,6 +466,9 @@ class SubtitleTranscodeVars:
 	keep_languages: Union[List[str], None] = None
 	"When given, only keep the subtitles that are tagged with one of the given 2 letter language codes"
 
+	keep_codecs: Union[List[str], None] = None
+	"When given, only keep the subtitles that are one of the given codecs (e.g. `[\"subrip\", \"hdmv_pgs_subtitle\"]`)"
+
 	exclude_versions: Union[List[str], None] = None
 	"When given, remove subtitles if they are at least one of the given versions (e.g. `sdh` or `forced`)"
 
@@ -467,6 +486,12 @@ class SubtitleTranscodeVars:
 				raise TypeError
 			if not all(f in LANGS for f in self.keep_languages):
 				raise ValueError(f"Unknown language code in list: {self.keep_languages}")
+
+		if self.keep_codecs is not None:
+			if not isinstance(self.keep_codecs, list):
+				raise TypeError
+			if not all(isinstance(f, str) for f in self.keep_codecs):
+				raise TypeError
 
 		if self.exclude_versions is not None:
 			if not isinstance(self.exclude_versions, list):
@@ -771,6 +796,12 @@ class MediaTranscode(Action):
 					stream["__version"] = self.__is_version(stream)
 
 					if stream["__version"] in (self.vars._subtitle.exclude_versions or []):
+						continue
+
+					if (
+						self.vars._subtitle.keep_codecs
+						and not stream["codec_name"] in self.vars._subtitle.keep_codecs
+					):
 						continue
 
 					if (
