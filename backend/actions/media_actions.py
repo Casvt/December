@@ -3,10 +3,11 @@
 from dataclasses import dataclass
 from json import dumps, loads
 from os import remove
-from os.path import getsize, splitext
+from os.path import getsize, isfile, splitext
 from re import MULTILINE, compile, escape, search
 from shutil import move
 from subprocess import PIPE, Popen, run
+from time import sleep
 from typing import Any, Dict, List, Literal, Tuple, Union
 
 from requests import RequestException, get
@@ -295,6 +296,8 @@ class MediaExtractSubs(Action):
 			if self.vars.remove_from_media:
 				# Delete original file, replace with new transcoded file
 				remove(file)
+				while isfile(file):
+					sleep(0.1)
 				source_file = st[0] + ".transcoded" + st[1]
 				move(source_file, file)
 
@@ -1055,6 +1058,8 @@ class MediaTranscode(Action):
 			else:
 				# Success
 				remove(file)
+				while isfile(file):
+					sleep(0.1)
 				move(output_file, file)
 
 		return files
