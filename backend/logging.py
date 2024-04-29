@@ -56,10 +56,12 @@ LOGGING_CONFIG = {
 			"stream": "ext://sys.stdout"
 		},
 		"file": {
-			"class": "logging.StreamHandler",
+			"class": "logging.handlers.RotatingFileHandler",
 			"level": "DEBUG",
 			"formatter": "detailed",
-			"stream": ""
+			"filename": "",
+			"maxBytes": 1_000_000,
+			"backupCount": 1
 		}
 	},
 	"loggers": {
@@ -76,11 +78,7 @@ LOGGING_CONFIG = {
 }
 
 def setup_logging(log_file: str, level: int) -> None:
+	LOGGING_CONFIG["handlers"]["file"]["filename"] = log_file
 	logging.config.dictConfig(LOGGING_CONFIG)
 	logging.getLogger().setLevel(level)
-	logging.getLogger().handlers[
-		LOGGING_CONFIG["root"]["handlers"].index("file")
-	].setStream(
-		open(log_file, 'a')
-	)
 	return

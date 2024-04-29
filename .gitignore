@@ -134,6 +134,7 @@ dmypy.json
 # Project specific files
 December.config
 December.log
+December.log.*
 December.queue
 December.error
 December.config.json
