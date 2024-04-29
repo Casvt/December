@@ -45,6 +45,10 @@ class ConfigValues:
 	radarr_base_url: Union[str, None] = None
 	radarr_api_token: Union[str, None] = None
 
+	bazarr_setup: bool = False
+	bazarr_base_url: Union[str, None] = None
+	bazarr_api_token: Union[str, None] = None
+
 	media_process: Sequence[Action] = field(default_factory=lambda: [])
 	subtitle_process: Sequence[Action] = field(default_factory=lambda: [])
 
@@ -231,6 +235,27 @@ class Config(metaclass=Singleton):
 			final_config['radarr_setup'] = True
 			final_config['radarr_base_url'] = radarr_base_url
 			final_config['radarr_api_token'] = radarr_api_token
+
+		bazarr_base_url = get_optional_key(
+			'bazarr_base_url',
+			'',
+			str
+		)
+		bazarr_api_token = get_optional_key(
+			'bazarr_api_token',
+			'',
+			str
+		)
+		if bazarr_base_url and bazarr_api_token:
+			try:
+				success = get(f'{bazarr_base_url}/api/system/status', params={'apikey': bazarr_api_token}).ok
+			except RequestException:
+				success = False
+			if not success:
+				raise ValueError(f"Can't connect to bazarr with given values")
+			final_config['bazarr_setup'] = True
+			final_config['bazarr_base_url'] = bazarr_base_url
+			final_config['bazarr_api_token'] = bazarr_api_token
 
 		media_process = get_optional_key(
 			'media_process',
