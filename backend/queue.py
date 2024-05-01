@@ -26,5 +26,5 @@ class Queue(metaclass=Singleton):
 				return
 			queue.remove(entry.rstrip())
 		with open(self.file, 'w+') as f:
-			f.write('\n'.join(queue))
+			f.write('\n'.join(queue) + '\n')
 		return
