@@ -1,18 +1,13 @@
 # December
+
 An automatic file transcoder following the rules you set.
 
-Documentation can be found inside the December.py file at the top.
+## Workings
 
-## Setup
-1. Install git if not already installed
-2. Git clone the repo:
-```bash
-git clone https://github.com/Casvt/December.git
-```
-3. Go inside the December folder
-4. Run the file:
-```bash
-python3 December.py
-```
-5. Stop running the file and read the documentation inside the file to learn how to setup the processes
-6. After setting everything up, run above command as a service in the background.
+Set up processes for media and subtitles files that will be applied to all files entering the queue. It's up to you how much or little you want to do. December even supports automatically adding files to the queue after they've been downloaded using Radarr or Sonarr, and has integrations with Bazarr and Plex. A plugin system is available so that you can even write or download custom actions.
+
+## Installation, support and documentation
+
+- For instructions on how to install December, see the [installation documentation](https://casvt.github.io/December/installation/).
+- For support, a [discord server](https://discord.gg/kWvhzNwKRV) is available or [make an issue](https://github.com/Casvt/December/issues).
+- For all documentation, see the [documentation hub](https://casvt.github.io/December/)
