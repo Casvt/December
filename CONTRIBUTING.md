@@ -2,7 +2,7 @@
 ## General steps
 Contributing to December consists of 5 steps, listed hereunder. 
 
-1. Make a [contributing request](https://github.com/Casvt/December/issues/new?template=contribute_request.md), where you describe what you plan on doing. This request needs to get approved before you can start, or your pull request won't be accepted. This is to avoid multiple people from doing the same thing and to avoid you wasting your time if we do not wish the changes. This is also where discussions can be held about how something will be implemented.
+1. Make a [contributing request](https://github.com/Casvt/December/issues/new?template=3_contribute_request.yaml), where you describe what you plan on doing. This request needs to get approved before you can start, or your pull request won't be accepted. This is to avoid multiple people from doing the same thing and to avoid you wasting your time if we do not wish the changes. This is also where discussions can be held about how something will be implemented.
 2. When the request is accepted, start your local development (more info about this below).
 3. When done, create a pull request to the Development branch, where you mention again what you've changed/added and give a link to the original contributing request issue.
 4. The PR will be reviewed and if requested, changes will need to be made before it is accepted. 
