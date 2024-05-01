@@ -4,12 +4,12 @@ title: ""
 labels: bug
 assignees: ""
 body:
-	- type: textarea
-	  attributes:
-	  	label: Description of the bug
-		  placeholder: A clear and concise description of what the bug is
-	  validations:
-	  	required: true
+  - type: textarea
+    attributes:
+      label: Description of the bug
+      placeholder: A clear and concise description of what the bug is
+    validations:
+      required: true
 
   - type: checkboxes
     attributes:
@@ -32,23 +32,23 @@ body:
         ZeroDivisionError: division by zero
       render: python
 
-	- type: textarea
-	  attributes:
-	  	label: Reproduction steps
-		  description: What steps do you need to take in order to trigger the bug?
+  - type: textarea
+    attributes:
+      label: Reproduction steps
+      description: What steps do you need to take in order to trigger the bug?
       value: |
         1. Go to '...'
         2. Click on '...'
         3. Scroll down to '...'
         ...
 
-	- type: textarea
-	  attributes:
-	  	label: Expected behaviour
+  - type: textarea
+    attributes:
+      label: Expected behaviour
 
-	- type: textarea
-	  attributes:
-	  	label: Screenshots
+  - type: textarea
+    attributes:
+      label: Screenshots
       description: If applicable, add screenshots to help explain your problem.
 
   - type: textarea
