@@ -1,0 +1,57 @@
+name: Bug Report
+description: Create a report for a bug or inconsistency that you found
+title: ""
+labels: bug
+assignees: ""
+body:
+	- type: textarea
+	  attributes:
+	  	label: Description of the bug
+		  placeholder: A clear and concise description of what the bug is
+	  validations:
+	  	required: true
+
+  - type: checkboxes
+    attributes:
+      label: Checked logs
+      description: Check the logs first to see if there are any errors.
+      options:
+        - label: I checked the logs
+          required: true
+  
+  - type: textarea
+    attributes:
+      label: Error
+      description: If you found an error in the logs, paste it here.
+      placeholder: |
+        Traceback (most recent call last):
+          File "temp.py", line 5, in <module>
+            main()
+          File "temp.py", line 2, in main
+            return 1 / 0
+        ZeroDivisionError: division by zero
+      render: python
+
+	- type: textarea
+	  attributes:
+	  	label: Reproduction steps
+		  description: What steps do you need to take in order to trigger the bug?
+      value: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        ...
+
+	- type: textarea
+	  attributes:
+	  	label: Expected behaviour
+
+	- type: textarea
+	  attributes:
+	  	label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: If you have anything other to say, you can put that here.
